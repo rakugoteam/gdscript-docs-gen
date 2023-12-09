@@ -10,7 +10,7 @@ lines_filter : dict = {
 	"comment": r"^## (.*)"
 }
 
-def scandir_for_gdscipts(path : str, skip = [], scripts = []):
+def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []):
 	obj = os.scandir(path)
 	print("\nScaning '% s' for gdscripts:" % path)
 	for entry in obj :
@@ -27,7 +27,8 @@ def scandir_for_gdscipts(path : str, skip = [], scripts = []):
 			if entry.path in skip:
 				continue
 
-			scandir_for_gdscipts(entry.path, skip, scripts)
+			if recursive:
+				scandir_for_gdscipts(entry.path, True, skip, scripts)
 
 	obj.close()
 	return scripts
@@ -171,13 +172,12 @@ def get_argv(args: dict):
 			case "-i" | "--input" | "-ir":
 				active_flag = "input"
 				args["input"] = []
-				args["input_r"] = arg == "-ir"
+				args["recursive"] = arg == "-ir"
 			
-			case "-s" | "--skip" | "-sr":
+			case "-s" | "--skip" :
 				active_flag = "skip"
 				args["skip"] = []
-				args["skip_r"] = arg == "-sr"
-	
+
 			case _:
 				get_argv_value(arg, active_flag, args)
 
@@ -186,24 +186,23 @@ def get_argv_value(value: str, active_flag: str, args: dict):
 		case "output":
 			args[active_flag] = value
 
-		case "skip" | "input":
+		case "input":
 			if value in ("-r", "--recurvise"):
-				switch_to_r(active_flag, value, args)
+				args["recursive"] = True
 				return
-
-			args[active_flag].append(value)
-
-def switch_to_r(active_flag: str, value: str, args: dict):
-		match active_flag:
-			case "input":
-				args["input_r"] = True
 			
-			case "skip":
-				args["skip_r"] = True
+			args[active_flag].append(value)
+		
+		case "skip":
+			args[active_flag].append(value)
 
 if __name__ == "__main__":
 	args = {}
 	get_argv(args)
-	print(args)
-	scripts = scandir_for_gdscipts("gd_src/", ["plugin.gd"])
+	# print(args)
+
+	for i in args["input"]:
+		scripts = scandir_for_gdscipts(
+			i, args["recursive"], args["skip"]
+		)
 	gen_docs(scripts)
