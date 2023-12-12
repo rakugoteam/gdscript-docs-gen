@@ -35,7 +35,7 @@ def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []
 			print(entry.path)
 		
 		if entry.is_dir():
-			if entry.path in skip:
+			if entry.name in skip:
 				continue
 
 			if recursive:
@@ -44,11 +44,11 @@ def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []
 	obj.close()
 	return scripts
 
-def gen_docs(scripts : list):
+def gen_docs(scripts : list, output: str):
 	for script in scripts:
-		gen_doc(script)
+		gen_doc(script, output)
 
-def gen_doc(script_path : str):
+def gen_doc(script_path : str, output: str):
 	text = []
 	print("\nGenerating docs for %s:" % script_path)
 	with open(script_path, 'r') as f:
@@ -65,7 +65,43 @@ def gen_doc(script_path : str):
 	for l in text:
 		parse_line(l, doc_tree, comments)
 	
-	to_md(doc_tree)
+	script_name = os.path.basename(script_path).removesuffix(".gd")
+	path = os.path.join(output, script_name + ".md")
+	write_to_md(md_tree(doc_tree), path)
+
+def write_to_md(mdt:dict, path:str):
+	lines = []
+	if "class_name" in mdt.keys():
+		lines += mdt["class_name"]
+	
+	else:
+		lines.append("# " + os.path.basename(path).removesuffix(".md"))
+
+	lines += mdt["extends"]
+
+	if "main" in mdt.keys():
+		lines += mdt["main"]
+	
+	lines += mdt["toc"]
+
+	if "const" in mdt.keys():
+		lines += mdt["consts"]
+	
+	if "vars" in mdt.keys():
+		lines += mdt["vars"]
+	
+	if "signals" in mdt.keys():
+		lines += mdt["signals"]
+	
+	if "funcs" in mdt.keys():
+		lines += mdt["funcs"]
+
+	file = open(path, "w")
+	for l in lines:
+		file.write(l + "\n")
+
+	file.close()
+	color_message(bcolors.OKBLUE, f"Written to file: {path}")
 
 def add_arr_if_needed(d:dict, arry_name:str):
 	if arry_name not in d.keys():
@@ -87,44 +123,53 @@ def add_comments_to_text(part:dict, text_part:dict):
 	for c in part["comments"]:
 		text_part.append("%s\n" % c)
 
-def to_md(doc_tree: dict):
+def md_tree(doc_tree: dict):
 	text = {}
 	for element in doc_tree:
 		match element:
 			case "class_name":
 				context = doc_tree[element]
-				add_arr_if_needed(text, "main")
-				text["main"].append("# %s\n" % context)
+				add_arr_if_needed(text, "class_name")
+				text["class_name"].append("# %s\n" % context)
 			
 			case "extends":
 				context = doc_tree[element]
-				add_arr_if_needed(text, "main")
-				text["main"].append("Extends **%s**\n" % context)
+				add_arr_if_needed(text, "extends")
+				text["extends"].append("\nExtends **%s**\n" % context)
 			
 			case "main_def":
+				if len(doc_tree[element]) == 0:
+					continue
+
 				add_arr_if_needed(text, "main")
 				for line in doc_tree[element]:
 					# convert bbc2md
 					text["main"].append("%s\n" % c)
 			
 			case "consts":
-				prepare(text, "consts", "## Consts")
+				if len(doc_tree[element]) == 0:
+					continue
+				
+				prepare(text, "consts", "\n## Consts")
 				consts = doc_tree[element]
 
 				for con in consts:
 					v = consts[con]["value"]
-					text["toc"].append(" - const **%s** -> %s" % (con, v))
+					text["toc"].append(" - [**%s**](#%s) -> %s" % (con, con, v))
 					text["consts"].append("### const %s" % con)
 					text["consts"].append("*value* : `%s`\n" % v)
 					add_comments_to_text(consts[con], text["consts"])
 
 			case "vars":
-				prepare(text, "vars", "## Vars")
+				if len(doc_tree[element]) == 0:
+					continue
+				
+				prepare(text, "vars", "\n## Vars")
 				vars = doc_tree[element]
 
 				for v in vars:
-					text["toc"].append(" - var **%s**" % v)
-					text["vars"].append("### var %s" % v)
+					text["toc"].append(" - [**%s**](#%s)" % (v, v))
+					text["vars"].append("### %s" % v)
 					if "default value" in vars[v]:
 						dv = vars[v]["default value"]
 						text["vars"].append("*default value* : `%s`\n" % dv)
@@ -132,7 +177,10 @@ def to_md(doc_tree: dict):
 					add_comments_to_text(vars[v], text["vars"])
 
 			case "singals":
-				prepare(text, "signals", "## Signals")
+				if len(doc_tree[element]) == 0:
+					continue
+
+				prepare(text, "signals", "\n## Signals\n")
 				signals = doc_tree[element]
 
 				for s in signals:
@@ -140,24 +188,28 @@ def to_md(doc_tree: dict):
 					if "args" in signals[s].keys():
 						args = signals[s]["args"]
 					
-					text["toc"].append(" - signal **%s**(%s) " % (s, args))
-					text["signals"].append("### signal %s(%s)" % (s, args))
+					text["toc"].append(" - [**%s**%s](#%s)" % (s, args, s))
+					text["signals"].append("### %s%s" % (s, args))
 					add_comments_to_text(signals[s], text["signals"])
 			
 			case "funcs":
+				if len(doc_tree[element]) == 0:
+					continue
+				
 				funcs = doc_tree[element]
-				prepare(text, "funcs", "## Funcs")
+				prepare(text, "funcs", "\n## Funcs")
 
 				for f in funcs:
 					args = ""
 					if "args" in funcs[f].keys():
 						args = funcs[f]["args"]
 					
-					text["toc"].append(" - func **%s**(%s) " % (f, args))
-					text["funcs"].append("### func %s(%s)" % (f, args))
+					text["toc"].append(" - [**%s**%s](#%s)" % (f, args, f))
+					text["funcs"].append("### %s%s" % (f, args))
 					add_comments_to_text(funcs[f], text["funcs"])
 	
 	# print_text_tree(text)
+	return text
 
 def print_text_tree(text:dict): 
 	print("\ntext tree:\n")
@@ -172,30 +224,42 @@ def parse_line(line : str, doc_tree : dict, comments: list):
 	if line.startswith("extends"):
 		doc_tree["extends"] = line.split(" ")[1].removesuffix("\n")
 		return
-		
+	
 	if line.startswith("class_name"):
 		doc_tree["class_name"] = line.split(" ")[1].removesuffix("\n")
 		doc_tree["main_def"] = comments
-	
+		c = len(comments)
 		return
 
 	for type in lines_filter.keys():
 		gen_doc_for(line, type, doc_tree, comments)
 
-def zero_comments_waring(type: str, xname: str):
-	print(f"{bcolors.WARNING} 0 comments for {type}: {xname}{bcolors.ENDC}")
+def color_message(color: str, message: str):
+	print(f"{color}{message}{bcolors.ENDC}")
+
+def comments_message(type: str, xname: str, comments_len : int):
+	message_color = bcolors.OKGREEN
+	if comments_len == 0:
+		message_color = bcolors.WARNING
+	
+	color_message(message_color,
+		f"Found {comments_len} comments for {type}: {xname}")
 
 def gen_doc_for_var(found, doc_tree : dict, comments : list):
 	var_name = found.group(2)
+	if var_name.startswith("_"):
+		return
+	
 	vars = doc_tree["vars"]
 	vars[var_name] = {}
 
+	c = 0
 	if len(comments) > 0:
 		vars[var_name]["comments"] = comments.copy()
+		c = len(comments)
 		comments.clear()
 	
-	else:
-		zero_comments_waring("var", var_name)
+	comments_message("var", var_name, c)
 
 	if found.group(3):
 		vars[var_name]["default value"] = found.group(3)
@@ -204,15 +268,18 @@ def gen_doc_for_var(found, doc_tree : dict, comments : list):
 
 def gen_doc_for_const(found, doc_tree : dict, comments : list):
 	const_name = found.group(1)
+	if const_name.startswith("_"):
+		return
 	consts = doc_tree["consts"]
 	consts[const_name] = {}
 	
+	c = 0
 	if len(comments) > 0:
 		consts[const_name]["comments"] = comments.copy()
+		c = len(comments)
 		comments.clear()
 	
-	else:
-		zero_comments_waring("const", const_name)
+	comments_message("const", const_name, c)
 
 	if found.group(2):
 		consts[const_name]["value"] = found.group(2)
@@ -221,15 +288,19 @@ def gen_doc_for_const(found, doc_tree : dict, comments : list):
 
 def gen_doc_for_signal(found, doc_tree : dict, comments : list):
 	signal_name = found.group(1)
+	if signal_name.startswith("_"):
+		return
+	
 	signals = doc_tree["signals"]
 	signals[signal_name] = {}
 
+	c = 0
 	if len(comments) > 0:
 		signals[signal_name]["comments"] = comments.copy()
+		c = len(comments)
 		comments.clear()
 	
-	else:
-		zero_comments_waring("signal", signal_name)
+	comments_message("signal", signal_name, c)
 
 	if found.group(2):
 		signals[signal_name]["args"] = found.group(2)
@@ -238,15 +309,19 @@ def gen_doc_for_signal(found, doc_tree : dict, comments : list):
 
 def gen_doc_for_func(found, doc_tree : dict, comments : list):
 	func_name = found.group(1)
+	if func_name.startswith("_"):
+		return
+	
 	funcs = doc_tree["funcs"]
 	funcs[func_name] = {}
 
+	c = 0
 	if len(comments) > 0:
 		funcs[func_name]["comments"] = comments.copy()
+		c = len(comments)
 		comments.clear()
 	
-	else:
-		zero_comments_waring("func", func_name)
+	comments_message("func", func_name, c)
 
 	if found.group(2):
 		funcs[func_name]["args"] = found.group(2)
@@ -275,7 +350,7 @@ def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 			gen_doc_for_var(found, doc_tree, comments)
 		
 		case "const":
-			gen_doc_for_const(found,  doc_tree, comments)
+			gen_doc_for_const(found, doc_tree, comments)
 
 		case "signal":
 			gen_doc_for_signal(found, doc_tree, comments)
@@ -332,4 +407,4 @@ if __name__ == "__main__":
 		scripts = scandir_for_gdscipts(
 			i, args["recursive"], args["skip"]
 		)
-	gen_docs(scripts)
+	gen_docs(scripts, args["output"])
