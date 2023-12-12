@@ -29,26 +29,24 @@ def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []
 			if entry.name in skip:
 				continue
 
-			scripts.append(entry.path)
-		
-		if entry.is_file():
 			print(entry.path)
-		
+			scripts.append(entry.path)
+
 		if entry.is_dir():
 			if entry.name in skip:
 				continue
 
 			if recursive:
 				scandir_for_gdscipts(entry.path, True, skip, scripts)
-
+			
 	obj.close()
 	return scripts
 
-def gen_docs(scripts : list, output: str):
+def gen_docs(scripts : list, output: str, check: bool):
 	for script in scripts:
-		gen_doc(script, output)
+		gen_doc(script, output, check)
 
-def gen_doc(script_path : str, output: str):
+def gen_doc(script_path : str, output: str, check :bool):
 	text = []
 	print("\nGenerating docs for %s:" % script_path)
 	with open(script_path, 'r') as f:
@@ -64,6 +62,9 @@ def gen_doc(script_path : str, output: str):
 
 	for l in text:
 		parse_line(l, doc_tree, comments)
+	
+	if check:
+		return
 	
 	script_name = os.path.basename(script_path).removesuffix(".gd")
 	path = os.path.join(output, script_name + ".md")
@@ -364,21 +365,27 @@ def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 
 def get_argv(args: dict):
 	active_flag = "-h"
-	
+
+	args["check only"] = False
+	args["recursive"] = False
+	args["output"] = ""
+	args["input"] = []
+	args["skip"] = []
 	for arg in sys.argv:
 		match arg:
 			case "-o" | "--output":
 				active_flag = "output"
-				args["output"] = ""
 
 			case "-i" | "--input" | "-ir":
 				active_flag = "input"
-				args["input"] = []
 				args["recursive"] = arg == "-ir"
 			
 			case "-s" | "--skip" :
 				active_flag = "skip"
-				args["skip"] = []
+			
+			case "-c" | "--check-only":
+				active_flag = "check"
+				args["check"] = True
 
 			case _:
 				get_argv_value(arg, active_flag, args)
@@ -407,4 +414,5 @@ if __name__ == "__main__":
 		scripts = scandir_for_gdscipts(
 			i, args["recursive"], args["skip"]
 		)
-	gen_docs(scripts, args["output"])
+	
+	gen_docs(scripts, args["output"], args["check"])
