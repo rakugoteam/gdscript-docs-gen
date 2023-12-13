@@ -364,26 +364,31 @@ def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 			comments.append(comment)
 
 def get_argv(args: dict):
-	active_flag = "-h"
-
+	active_flag = "help"
+	args["help"] = True
 	args["check only"] = False
 	args["recursive"] = False
 	args["output"] = ""
 	args["input"] = []
 	args["skip"] = []
+
 	for arg in sys.argv:
 		match arg:
+			case "-h" | "--help":
+				active_flag = "help"
+				args["help"] = True
+
 			case "-o" | "--output":
 				active_flag = "output"
 
-			case "-i" | "--input" | "-ir":
+			case "-i" | "--input" | "-ir" :
 				active_flag = "input"
 				args["recursive"] = arg == "-ir"
 			
 			case "-s" | "--skip" :
 				active_flag = "skip"
 			
-			case "-c" | "--check-only":
+			case "-c" | "--check-only" :
 				active_flag = "check"
 				args["check"] = True
 
@@ -409,6 +414,26 @@ if __name__ == "__main__":
 	args = {}
 	get_argv(args)
 	# print(args)
+
+	if args["help"]:
+		print(
+			"""
+			XX version YY
+			XX is a simple python tool that generates markdown from gdscript doc comments.
+
+			Example of usage:
+				python XX.py -o output -ir gds_source -s plugin.gd
+				python XX.py -c -ir gds_source -s plugin.gd
+
+			Flags:
+				-h, --help		will display this message
+				-i, --input		you give dir sources of gdscript script to scan
+				-r, --recursive		scan input recusivly
+				-s, --skip		files and dirs to skip from input
+				-c, --check-only	will only check and print out how many doc comments you have
+			"""
+		)
+		exit()
 
 	for i in args["input"]:
 		scripts = scandir_for_gdscipts(
