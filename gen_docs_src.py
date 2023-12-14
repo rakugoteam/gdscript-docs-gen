@@ -11,19 +11,19 @@ lines_filter : dict = {
 }
 
 class bcolors:
-	HEADER = '\033[95m'
-	OKBLUE = '\033[94m'
-	OKCYAN = '\033[96m'
-	OKGREEN = '\033[92m'
-	WARNING = '\033[93m'
-	FAIL = '\033[91m'
-	ENDC = '\033[0m'
-	BOLD = '\033[1m'
-	UNDERLINE = '\033[4m'
+	HEADER = "\033[95m"
+	OKBLUE = "\033[94m"
+	OKCYAN = "\033[96m"
+	OKGREEN = "\033[92m"
+	WARNING = "\033[93m"
+	FAIL = "\033[91m"
+	ENDC = "\033[0m"
+	BOLD = "\033[1m"
+	UNDERLINE = "\033[4m"
 
 def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []):
 	obj = os.scandir(path)
-	print("\nScaning '% s' for gdscripts:" % path)
+	print("\nScaning \"% s\" for gdscripts:" % path)
 	for entry in obj :
 		if entry.is_file() and entry.name.endswith(".gd"):
 			if entry.name in skip:
@@ -49,7 +49,7 @@ def gen_docs(scripts : list, output: str, check: bool):
 def gen_doc(script_path : str, output: str, check :bool):
 	text = []
 	print("\nGenerating docs for %s:" % script_path)
-	with open(script_path, 'r') as f:
+	with open(script_path, "r") as f:
 		text = f.readlines()
 	
 	doc_tree : dict = {}
@@ -117,12 +117,36 @@ def prepare(text: dict, space: str, header: str):
 	if space not in text.keys():
 		text[space] = [header]
 
+def bbcode_to_markdown(bbcode):
+	# Define mapping of BBCode to Markdown
+	bbcode_to_markdown = {
+		"[b]": "**",
+		"[/b]": "**",
+		"[i]": "*",
+		"[/i]": "*",
+		"[u]": "__",
+		"[/u]": "__",
+		"[url]": "[",
+		"[/url]": "]",
+		"[code]": "`",
+		"[/code]": "`",
+		"[codeblock]": "```gdscript\n",
+		"[/codeblock]": "\n```",
+	}
+
+	# Use regular expressions to replace BBCode with Markdown
+	for bbcode_tag, markdown_tag in bbcode_to_markdown.items():
+		bbcode = re.sub(re.escape(bbcode_tag), markdown_tag, bbcode)
+
+	return bbcode
+
 def add_comments_to_text(part:dict, text_part:dict):
 	if "comments" not in part.keys():
 		return
 	
 	for c in part["comments"]:
-		text_part.append("%s\n" % c)
+		md = bbcode_to_markdown(c)
+		text_part.append("%s\n" % md)
 
 def md_tree(doc_tree: dict):
 	text = {}
