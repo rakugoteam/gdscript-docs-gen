@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def gen_doc_for_const(found, doc_tree : dict, comments : list):
 	const_name = found.group(1)
 	if const_name.startswith("_"):

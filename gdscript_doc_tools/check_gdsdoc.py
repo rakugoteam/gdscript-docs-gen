@@ -1,4 +1,6 @@
-def gen_doc(script_path : str, output: str, check :bool):
+from gdscript_doc_tools import *
+
+def check_gdsdoc(script_path : str):
 	text = []
 	print("\nGenerating docs for %s:" % script_path)
 	with open(script_path, "r") as f:
@@ -15,9 +17,4 @@ def gen_doc(script_path : str, output: str, check :bool):
 	for l in text:
 		parse_line(l, doc_tree, comments)
 	
-	if check:
-		return
-	
-	script_name = os.path.basename(script_path).removesuffix(".gd")
-	path = os.path.join(output, script_name + ".md")
-	write_to_md(md_tree(doc_tree), path)
+	return doc_tree

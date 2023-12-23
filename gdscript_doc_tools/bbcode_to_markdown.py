@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def bbcode_to_markdown(bbcode):
 	# Define mapping of BBCode to Markdown
 	bbcode_to_markdown = {

@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def gen_doc_for_func(found, doc_tree : dict, comments : list):
 	func_name = found.group(1)
 	if func_name.startswith("_"):

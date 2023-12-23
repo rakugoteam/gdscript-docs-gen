@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def get_argv(args: dict):
 	active_flag = "help"
 	args["help"] = True
@@ -22,10 +24,6 @@ def get_argv(args: dict):
 			
 			case "-s" | "--skip" :
 				active_flag = "skip"
-			
-			case "-c" | "--check-only" :
-				active_flag = "check"
-				args["check"] = True
 
 			case _:
 				get_argv_value(arg, active_flag, args)

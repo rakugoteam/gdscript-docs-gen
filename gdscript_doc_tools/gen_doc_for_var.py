@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def gen_doc_for_var(found, doc_tree : dict, comments : list):
 	var_name = found.group(2)
 	if var_name.startswith("_"):

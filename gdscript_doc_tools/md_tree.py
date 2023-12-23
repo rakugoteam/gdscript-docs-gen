@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def md_tree(doc_tree: dict):
 	text = {}
 	for element in doc_tree:

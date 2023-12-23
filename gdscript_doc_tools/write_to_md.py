@@ -1,10 +1,15 @@
+from gdscript_doc_tools import *
+
 def write_to_md(mdt:dict, path:str):
 	lines = []
 	if "class_name" in mdt.keys():
 		lines += mdt["class_name"]
 	
 	else:
-		lines.append("# " + os.path.basename(path).removesuffix(".md"))
+		script_name = os.path.basename(path)
+		script_name = script_name.removesuffix(".md")
+		script_name = snake_case_to_camel_case(script_name)
+		lines.append("# %s" % script_name)
 
 	lines += mdt["extends"]
 

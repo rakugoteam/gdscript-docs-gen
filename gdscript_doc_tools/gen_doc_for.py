@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 	found = re.search(lines_filter[type], line)
 	if not found: return

@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []):
 	obj = os.scandir(path)
 	print("\nScaning \"% s\" for gdscripts:" % path)

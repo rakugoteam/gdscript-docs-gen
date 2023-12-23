@@ -1,3 +1,5 @@
+from gdscript_doc_tools import *
+
 def comments_message(type: str, xname: str, comments_len : int):
 	message_color = bcolors.OKGREEN
 	if comments_len == 0:
