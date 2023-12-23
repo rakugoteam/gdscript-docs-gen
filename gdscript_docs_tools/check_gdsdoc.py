@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def check_gdsdoc(script_path : str):
 	text = []

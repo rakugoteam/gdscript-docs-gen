@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def gen_doc(script_path : str, output: str):
 	doc_tree = check_gdsdoc(script_path)

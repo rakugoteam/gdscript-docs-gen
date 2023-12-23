@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def comments_message(type: str, xname: str, comments_len : int):
 	message_color = bcolors.OKGREEN

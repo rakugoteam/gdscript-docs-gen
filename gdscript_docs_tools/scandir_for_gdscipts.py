@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []):
 	obj = os.scandir(path)

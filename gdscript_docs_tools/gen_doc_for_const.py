@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def gen_doc_for_const(found, doc_tree : dict, comments : list):
 	const_name = found.group(1)

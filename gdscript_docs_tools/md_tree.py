@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def md_tree(doc_tree: dict):
 	text = {}

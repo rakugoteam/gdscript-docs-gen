@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def add_arr_if_needed(d:dict, arry_name:str):
 	if arry_name not in d.keys():

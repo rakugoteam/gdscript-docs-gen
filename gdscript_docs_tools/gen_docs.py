@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def gen_docs(scripts : list, output: str, check: bool):
 	for script in scripts:

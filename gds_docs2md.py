@@ -1,5 +1,5 @@
 
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 if __name__ == "__main__":
 	args = {}

@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def gen_doc_for_signal(found, doc_tree : dict, comments : list):
 	signal_name = found.group(1)

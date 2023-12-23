@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def write_to_md(mdt:dict, path:str):
 	lines = []

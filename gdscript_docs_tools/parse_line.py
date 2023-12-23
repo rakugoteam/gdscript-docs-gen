@@ -1,4 +1,4 @@
-from gdscript_doc_tools import *
+from gdscript_docs_tools import *
 
 def parse_line(line : str, doc_tree : dict, comments: list):
 	if line.startswith("extends"):
