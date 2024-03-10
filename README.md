@@ -33,3 +33,9 @@ It is a simple python tool that generates markdown from gdscript doc comments.
 -r, --recursive		scan input recursively
 -s, --skip		files and dirs to skip from input
 ```
+
+### Project Tools directory
+
+Project tools is set of python scripts that
+I made to make developing this project easier,
+they are not part of gdscript-docs-tools.
