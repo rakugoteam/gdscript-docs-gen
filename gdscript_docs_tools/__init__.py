@@ -1,5 +1,5 @@
 import re, os, sys
-from .scandir_for_gdscipts import scandir_for_gdscipts
+from .scandir_for_gdscipts import scan_for_gdscripts
 from .gen_docs import gen_docs
 from .gen_doc import gen_doc
 from .write_to_md import write_to_md
@@ -9,7 +9,7 @@ from .bbcode_to_markdown import bbcode_to_markdown
 from .add_comments_to_text import add_comments_to_text
 from .md_tree import md_tree
 from .print_text_tree import print_text_tree
-from .parse_line import parse_line
+from .parse_line import parse_gds_line
 from .color_message import color_message
 from .comments_message import comments_message
 from .gen_doc_for_var import gen_doc_for_var

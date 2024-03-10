@@ -1,6 +1,6 @@
 from gdscript_docs_tools import *
 
-def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []):
+def scan_for_gdscripts(path : str, recursive = False , skip = [], scripts = []):
 	obj = os.scandir(path)
 	print("\nScaning \"% s\" for gdscripts:" % path)
 	for entry in obj :
@@ -16,7 +16,7 @@ def scandir_for_gdscipts(path : str, recursive = False , skip = [], scripts = []
 				continue
 
 			if recursive:
-				scandir_for_gdscipts(entry.path, True, skip, scripts)
+				scan_for_gdscripts(entry.path, True, skip, scripts)
 			
 	obj.close()
 	return scripts

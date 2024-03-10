@@ -1,6 +1,6 @@
 from gdscript_docs_tools import *
 
-def parse_line(line : str, doc_tree : dict, comments: list):
+def parse_gds_line(line : str, doc_tree : dict, comments: list):
 	if line.startswith("extends"):
 		doc_tree["extends"] = line.split(" ")[1].removesuffix("\n")
 		return

@@ -15,6 +15,6 @@ def check_gdsdoc(script_path : str):
 	comments : list = []
 
 	for l in text:
-		parse_line(l, doc_tree, comments)
+		parse_gds_line(l, doc_tree, comments)
 	
 	return doc_tree
