@@ -16,91 +16,103 @@ def scan_for_md_files():
 
 # we need to split the md file into sections of vars, consts, signals, and funcs
 def parse_md_file(md_file):
-	doc_tree = {}
-	doc_tree["vars"] = {}
-	doc_tree["consts"] = {}
-	doc_tree["singals"] = {}
-	doc_tree["funcs"] = {}
-	
 	with open(md_file, "r") as f:
 		text = f.readlines()
 	
-	comments = []
-	
+	section = ""
+	item = ""
+	gdscript_path = ""
+	gdscript_tree = {}
 	for l in text:
-		parse_md_line(l, doc_tree)
+		parse_md_line(l, gdscript_tree,
+			gdscript_path, section, item)
 	
+	color_message(bcolors.OKGREEN,
+		f"Finished parsing {md_file}")
+	# we need to save the gdscript_tree to the gdscript file
+
+	color_message(bcolors.OKBLUE,
+		f"Saving to {gdscript_path}")
+	with open(md_file.removesuffix(".md") + ".gd", "w") as f:
+		for section in gdscript_tree:
+			for item in gdscript_tree[section]:
+				for line in gdscript_tree[section][item]:
+					f.write(line)
+	
+	color_message(bcolors.OKGREEN,
+		f"Finished saving to {gdscript_path}")
+
 	return doc_tree
 
-def _add_item(items, l, times = 1):
-	item = l.split(" ")[times].removesuffix("\n")
-	items[l.split(" ")[1]] = item
-	return item
-
-def parse_md_line(l, doc_tree):
+def parse_md_line(l, gdscript_tree, gdscript_path, section, item):
 	if l.startswith("# "):
-		detect_class_name(l, doc_tree)
+		imp = md_class_name(l)
+		gdscript_tree = imp[0]
+		gdscript_path = imp[1]
 
-	if l.startswith("## "):
-		detect_section(l, doc_tree)
+	elif l.startswith("## "):
+		section = md_section(l)
+
+	elif l.startswith("### "):
+		item = md_item(l)
 	
-	if l.startswith("### "):
-		detect_section_item(l, doc_tree)
+	elif item in gdscript_tree[section]:
+		gdscript_tree[section][item] += l
+	
+		if section == "unknown":
+			color_message(bcolors.WARNING,
+				f"Line of unknown section: {l}")
 
-def detect_class_name(l, doc_tree):
+
+def get_md_item(l, times = 1):
+	return l.split(" ")[times].removesuffix("\n")
+
+def md_class_name(l):
 	# we get the class name
-	_add_item(doc_tree["class_name"], l, 1)
+	class_name = get_md_item(l, 1)
 	color_message(bcolors.OKGREEN,
-	f"Found class name: {doc_tree['class_name']}")
+	f"Found class name: {class_name}")
 
 	# we need to get path to gdscript file to add lines later
 	# so we ask user for the path
-	mess = f"Enter the path to the gdscript file for {doc_tree['class_name']}: "
+	mess = f"Enter the path to the gdscript file for {class_name}: "
 	gdscript_path = input(mess)
 
-def detect_section(l, doc_tree):
+	# we also need to return gdscript_tree using check_gdsdoc()
+	return (check_gdsdoc(gdscript_path), gdscript_path)
+
+def md_section(l):
+	section = ""
 	match l:
 		case "## Variables":
-			doc_tree["section"] = "vars"
+			section = "vars"
 
 		case "## Constants":
-			doc_tree["section"] = "consts"
+			section = "consts"
 
 		case "## Signals":
-			doc_tree["section"] = "signals"
+			section = "signals"
 
 		case "## Functions":
-			doc_tree["section"] = "funcs"
+			section = "funcs"
 
 		case _:
-			doc_tree["section"] = "unknown"
+			section = "unknown"
 
-	if doc_tree["section"] != "unknown":
+	if section != "unknown":
 		color_message(bcolors.OKGREEN,
-			f"Found section: {doc_tree['section']}")
+			f"Found section: {section} type")
 
 	else:
 		unk = l.split(' ')[1].removesuffix('\n')
 		color_message(bcolors.WARNING,
 			f"Unknown type section: {unk}")
+	
+	return section
 
-def detect_section_item(l, doc_tree):
+def md_item(l, section):
 	# we are in a new item
-	match doc_tree["section"]:
-		case "vars":
-			_add_item(doc_tree["vars"], l, 2)
-
-		case "consts":
-			_add_item(doc_tree["consts"], l, 2)
-
-		case "signals":
-			_add_item(doc_tree["signals"], l, 2)
-
-		case "funcs":
-			_add_item(doc_tree["funcs"], l, 2)
-
-		case "unknown" | _:
-			_add_item(doc_tree["unknown"])
+	item = get_md_item(doc_tree["vars"], l, 2)
 
 	if doc_tree["section"] != "unknown":
 		item = l.split(' ')[2].removesuffix('\n')
@@ -111,4 +123,7 @@ def detect_section_item(l, doc_tree):
 		unk = l.split(' ')[2].removesuffix('\n')
 		color_message(bcolors.WARNING,
 			f"Unknown type item: {unk}")
+	
+	return item
+
 
