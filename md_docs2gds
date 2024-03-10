@@ -1,0 +1,114 @@
+#!/usr/bin/python
+
+# This is a python script that will take markdown docs and convert them to bbcode and put them in a gdscript scripts.
+import markdown2
+from gdscript_docs_tools import *
+
+def scan_for_md_files():
+	import os
+	md_files = []
+	for root, dirs, files in os.walk("."):
+		for file in files:
+			if file.endswith(".md"):
+				md_files.append(os.path.join(root, file))
+	
+	return md_files
+
+# we need to split the md file into sections of vars, consts, signals, and funcs
+def parse_md_file(md_file):
+	doc_tree = {}
+	doc_tree["vars"] = {}
+	doc_tree["consts"] = {}
+	doc_tree["singals"] = {}
+	doc_tree["funcs"] = {}
+	
+	with open(md_file, "r") as f:
+		text = f.readlines()
+	
+	comments = []
+	
+	for l in text:
+		parse_md_line(l, doc_tree)
+	
+	return doc_tree
+
+def _add_item(items, l, times = 1):
+	item = l.split(" ")[times].removesuffix("\n")
+	items[l.split(" ")[1]] = item
+	return item
+
+def parse_md_line(l, doc_tree):
+	if l.startswith("# "):
+		detect_class_name(l, doc_tree)
+
+	if l.startswith("## "):
+		detect_section(l, doc_tree)
+	
+	if l.startswith("### "):
+		detect_section_item(l, doc_tree)
+
+def detect_class_name(l, doc_tree):
+	# we get the class name
+	_add_item(doc_tree["class_name"], l, 1)
+	color_message(bcolors.OKGREEN,
+	f"Found class name: {doc_tree['class_name']}")
+
+	# we need to get path to gdscript file to add lines later
+	# so we ask user for the path
+	mess = f"Enter the path to the gdscript file for {doc_tree['class_name']}: "
+	gdscript_path = input(mess)
+
+def detect_section(l, doc_tree):
+	match l:
+		case "## Variables":
+			doc_tree["section"] = "vars"
+
+		case "## Constants":
+			doc_tree["section"] = "consts"
+
+		case "## Signals":
+			doc_tree["section"] = "signals"
+
+		case "## Functions":
+			doc_tree["section"] = "funcs"
+
+		case _:
+			doc_tree["section"] = "unknown"
+
+	if doc_tree["section"] != "unknown":
+		color_message(bcolors.OKGREEN,
+			f"Found section: {doc_tree['section']}")
+
+	else:
+		unk = l.split(' ')[1].removesuffix('\n')
+		color_message(bcolors.WARNING,
+			f"Unknown type section: {unk}")
+
+def detect_section_item(l, doc_tree):
+	# we are in a new item
+	match doc_tree["section"]:
+		case "vars":
+			_add_item(doc_tree["vars"], l, 2)
+
+		case "consts":
+			_add_item(doc_tree["consts"], l, 2)
+
+		case "signals":
+			_add_item(doc_tree["signals"], l, 2)
+
+		case "funcs":
+			_add_item(doc_tree["funcs"], l, 2)
+
+		case "unknown" | _:
+			_add_item(doc_tree["unknown"])
+
+	if doc_tree["section"] != "unknown":
+		item = l.split(' ')[2].removesuffix('\n')
+		color_message(bcolors.OKGREEN,
+			f"Found item: {item} in section: {doc_tree['section']}")
+	
+	else:
+		unk = l.split(' ')[2].removesuffix('\n')
+		color_message(bcolors.WARNING,
+			f"Unknown type item: {unk}")
+
