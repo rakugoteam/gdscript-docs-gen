@@ -1,12 +1,14 @@
 from gdscript_docs_tools import *
 
 def parse_gds_line(line : str, doc_tree : dict, comments: list):
+	item_name = line.split(" ")[1].removesuffix("\n")
+	
 	if line.startswith("extends"):
-		doc_tree["extends"] = line.split(" ")[1].removesuffix("\n")
+		doc_tree["extends"] = item_name
 		return
 	
 	if line.startswith("class_name"):
-		doc_tree["class_name"] = line.split(" ")[1].removesuffix("\n")
+		doc_tree["class_name"] = item_name
 		doc_tree["main_def"] = comments
 		c = len(comments)
 		return
