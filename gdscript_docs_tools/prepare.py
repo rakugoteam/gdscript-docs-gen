@@ -1,3 +1,5 @@
+from gdscript_docs_tools import *
+
 def prepare(text: dict, space: str, header: str):
 	add_arr_if_needed(text, "toc")
 

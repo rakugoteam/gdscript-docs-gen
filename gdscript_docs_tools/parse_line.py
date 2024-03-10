@@ -1,7 +1,7 @@
 from gdscript_docs_tools import *
 
 def parse_gds_line(line : str, doc_tree : dict, comments: list):
-	item_name = line.split(" ")[1].removesuffix("\n")
+	item_name = ""
 	
 	if line.startswith("extends"):
 		doc_tree["extends"] = item_name
