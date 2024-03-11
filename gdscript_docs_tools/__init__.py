@@ -14,12 +14,12 @@ from .write_to_md import write_to_md
 from .get_argv_value import get_argv_value
 from .get_argv import get_argv
 from .lines_filter import lines_filter
+from .infer_type import infer_type
 from .gen_doc_for_var import gen_doc_for_var
 from .gen_doc_for_const import gen_doc_for_const
 from .gen_doc_for_signal import gen_doc_for_signal
 from .gen_doc_for_func import gen_doc_for_func
 from .gen_doc_for import gen_doc_for
-from .parse_line import parse_gds_line
 from .check_gdsdoc import check_gdsdoc
 from .gen_doc import gen_doc
 from .gen_docs import gen_docs
