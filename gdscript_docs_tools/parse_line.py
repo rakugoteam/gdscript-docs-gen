@@ -4,6 +4,9 @@ def parse_gds_line(line : str, doc_tree : dict, comments: list):
 	item_name = ""
 	
 	if line.startswith("extends"):
+		# get name of extend Node type
+		# from eg. `extends Node2D` - we get `Node2D`
+		item_name = line.split(" ")[1].strip()
 		doc_tree["extends"] = item_name
 		return
 	
