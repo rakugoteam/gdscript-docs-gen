@@ -8,6 +8,9 @@ def parse_gds_line(line : str, doc_tree : dict, comments: list):
 		return
 	
 	if line.startswith("class_name"):
+		# get name of the class
+		# from eg. `class_name MyClass` - we get `MyClass`
+		item_name = line.split(" ")[1].strip()
 		doc_tree["class_name"] = item_name
 		doc_tree["main_def"] = comments
 		c = len(comments)
