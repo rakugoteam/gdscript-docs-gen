@@ -5,6 +5,13 @@ def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 	if not found: return
 
 	match type:
+		case "extends":
+			doc_tree["extends"] = found.group(1)
+		
+		case "class_name":
+			doc_tree["class_name"] = found.group(1)
+			doc_tree["main_def"] = comments
+
 		case "var":
 			gen_doc_for_var(found, doc_tree, comments)
 		

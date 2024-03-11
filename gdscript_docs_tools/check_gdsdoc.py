@@ -15,6 +15,7 @@ def check_gdsdoc(script_path : str):
 	comments : list = []
 
 	for l in text:
-		parse_gds_line(l, doc_tree, comments)
+		for type in lines_filter.keys():
+			gen_doc_for(line, type, doc_tree, comments)
 	
 	return doc_tree
