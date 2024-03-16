@@ -1,7 +1,7 @@
 from gdscript_docs_tools import *
 
-def infer_type(vars : dict, var_name : str):
-	default_value = vars[var_name]["default value"]
+def infer_type(vars : dict, var_name : str, x : str = "default value"):
+	default_value = vars[var_name][x]
 	# if value is a "string"
 	if default_value.startswith("\"") \
 		and default_value.endswith("\""):

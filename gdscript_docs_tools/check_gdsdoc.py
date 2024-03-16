@@ -16,6 +16,6 @@ def check_gdsdoc(script_path : str):
 
 	for l in text:
 		for type in lines_filter.keys():
-			gen_doc_for(line, type, doc_tree, comments)
+			gen_doc_for(l, type, doc_tree, comments)
 	
 	return doc_tree

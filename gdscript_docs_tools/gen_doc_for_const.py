@@ -27,4 +27,4 @@ def gen_doc_for_const(found, doc_tree : dict, comments : list):
 		consts[const_name]["value"] = found.group(3).replace("=", "")
 
 		if not "type" in consts[const_name]:
-			infer_type(consts, const_name)
+			infer_type(consts, const_name, "value")

@@ -26,7 +26,7 @@ def gen_doc_for_var(found, doc_tree : dict, comments : list):
 		
 	if found.group(4):
 		# we need to remove `=` from the default value
-		default_value = vars[var_name]["default value"].replace("=", "")
+		default_value = found.group(4).replace("=", "").strip()
 
 		if default_value.startswith("[") \
 			or default_value.startswith("{") \
