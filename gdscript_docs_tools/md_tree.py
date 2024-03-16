@@ -65,9 +65,9 @@ def md_tree(doc_tree: dict):
 					if "args" in signals[s].keys():
 						args = signals[s]["args"]
 					
-					text["toc"].append(" - [**%s**%s](#%s)" % (s, args, s))
-					text["signals"].append("### %s%s" % (s, args))
-					add_comments_to_text(signals[s], text["signals"])
+					text["toc"].append(" - [**%s**](#%s)" % (s,s))
+					text["signals"].append("### %s" % s)
+					add_comments_to_text(signals[s], text["signals"], args)
 			
 			case "funcs":
 				if len(doc_tree[element]) == 0:
@@ -81,9 +81,9 @@ def md_tree(doc_tree: dict):
 					if "args" in funcs[f].keys():
 						args = funcs[f]["args"]
 					
-					text["toc"].append(" - [**%s**%s](#%s)" % (f, args, f))
+					text["toc"].append(" - [**%s**](#%s)" % (f, f))
 					text["funcs"].append("### %s%s" % (f, args))
-					add_comments_to_text(funcs[f], text["funcs"])
+					add_comments_to_text(funcs[f], text["funcs"], args)
 	
 	# print_text_tree(text)
 	return text

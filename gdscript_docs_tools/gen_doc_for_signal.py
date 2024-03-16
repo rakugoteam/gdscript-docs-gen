@@ -1,6 +1,7 @@
 from gdscript_docs_tools import *
 
 def gen_doc_for_signal(found, doc_tree : dict, comments : list):
+	#  r"^singal\s+(\w+)\((.*)\)\n"
 	signal_name = found.group(1)
 	if signal_name.startswith("_"):
 		return
@@ -18,3 +19,4 @@ def gen_doc_for_signal(found, doc_tree : dict, comments : list):
 
 	if found.group(2):
 		signals[signal_name]["args"] = found.group(2)
+		
