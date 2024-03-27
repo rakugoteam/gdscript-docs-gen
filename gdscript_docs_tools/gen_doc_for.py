@@ -10,7 +10,11 @@ def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 		
 		case "class_name":
 			doc_tree["class_name"] = found.group(1)
-			doc_tree["main_def"] = comments
+			doc_tree["main_def"] = comments.copy()
+			c = len(comments)
+			comments.clear()
+			comments_message("main_def", doc_tree["class_name"], c)
+
 
 		case "var":
 			gen_doc_for_var(found, doc_tree, comments)

@@ -1,7 +1,7 @@
 from gdscript_docs_tools import *
 
 def gen_doc_for_signal(found, doc_tree : dict, comments : list):
-	#  r"^singal\s+(\w+)\((.*)\)\n"
+	# "^signal\s+(\w+)(\((.+)\))?"
 	signal_name = found.group(1)
 	if signal_name.startswith("_"):
 		return

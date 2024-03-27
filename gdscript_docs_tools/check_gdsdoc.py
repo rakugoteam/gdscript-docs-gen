@@ -7,9 +7,12 @@ def check_gdsdoc(script_path : str):
 		text = f.readlines()
 	
 	doc_tree : dict = {}
+	doc_tree["class_name"] = ""
+	doc_tree["extends"] = ""
+	doc_tree["main_def"] = []
 	doc_tree["vars"] = {}
 	doc_tree["consts"] = {}
-	doc_tree["singals"] = {}
+	doc_tree["signals"] = {}
 	doc_tree["funcs"] = {}
 
 	comments : list = []

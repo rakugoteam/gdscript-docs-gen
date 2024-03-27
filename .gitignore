@@ -1,3 +1,11 @@
+# tested on those projects:
+advanced-text/
+emojis-for-godot/
+godot-material-icons/
+
+# standard output dir
+docs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

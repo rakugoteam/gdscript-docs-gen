@@ -13,8 +13,8 @@ def write_to_md(mdt:dict, path:str):
 
 	lines += mdt["extends"]
 
-	if "main" in mdt.keys():
-		lines += mdt["main"]
+	if "main_def" in mdt.keys():
+		lines += mdt["main_def"]
 	
 	lines += mdt["toc"]
 
