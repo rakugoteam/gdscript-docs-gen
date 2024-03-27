@@ -16,6 +16,7 @@ def write_to_md(mdt:dict, path:str):
 	if "main_def" in mdt.keys():
 		lines += mdt["main_def"]
 	
+	lines += ["## Table of Contents\n"]
 	lines += mdt["toc"]
 
 	if "const" in mdt.keys():

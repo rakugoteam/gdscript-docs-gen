@@ -15,18 +15,18 @@ def md_tree(doc_tree: dict):
 			case "extends":
 				context = doc_tree[element]
 				add_arr_if_needed(text, "extends")
-				text["extends"].append("\nExtends **%s**" % context)
+				text["extends"].append("\nExtends **%s**\n" % context)
 			
 			case "consts":
 				if len(doc_tree[element]) == 0:
 					continue
 				
-				prepare(text, "consts", "\n## Consts\n")
+				prepare(text, "consts")
 				consts = doc_tree[element]
 
 				for con in consts:
 					v = consts[con]["value"]
-					text["toc"].append(" - [**%s**](#%s) -> %s" % (con, con, v))
+					text["toc"].append("\t- [**%s**](#%s) -> %s" % (con, con, v))
 					text["consts"].append("\n### const %s" % con)
 					text["consts"].append("*value* : `%s`" % v)
 					add_comments_to_text(consts[con], text["consts"])
@@ -35,11 +35,11 @@ def md_tree(doc_tree: dict):
 				if len(doc_tree[element]) == 0:
 					continue
 				
-				prepare(text, "vars", "\n## Vars\n")
+				prepare(text, "vars")
 				vars = doc_tree[element]
 
 				for v in vars:
-					text["toc"].append(" - [**%s**](#%s)" % (v, v))
+					text["toc"].append("\t- [**%s**](#%s)" % (v, v))
 					text["vars"].append("\n### %s\n" % v)
 					if "default value" in vars[v]:
 						dv = vars[v]["default value"]
@@ -51,7 +51,7 @@ def md_tree(doc_tree: dict):
 				if len(doc_tree[element]) == 0:
 					continue
 
-				prepare(text, "signals", "\n## Signals\n")
+				prepare(text, "signals")
 				signals = doc_tree[element]
 
 				for s in signals:
@@ -59,7 +59,7 @@ def md_tree(doc_tree: dict):
 					if "args" in signals[s].keys():
 						args = signals[s]["args"]
 					
-					text["toc"].append(" - [**%s**](#%s)" % (s,s))
+					text["toc"].append("\t- [**%s**](#%s)" % (s,s))
 					text["signals"].append("\n### %s" % s)
 					add_comments_to_text(signals[s], text["signals"], args)
 			
@@ -68,14 +68,14 @@ def md_tree(doc_tree: dict):
 					continue
 				
 				funcs = doc_tree[element]
-				prepare(text, "funcs", "\n## Funcs")
+				prepare(text, "funcs")
 
 				for f in funcs:
 					args = ""
 					if "args" in funcs[f].keys():
 						args = funcs[f]["args"]
 					
-					text["toc"].append(" - [**%s**](#%s)" % (f, f))
+					text["toc"].append("\t- [**%s**](#%s)" % (f, f))
 					text["funcs"].append("\n### %s" % f)
 					add_comments_to_text(funcs[f], text["funcs"], args)
 	
