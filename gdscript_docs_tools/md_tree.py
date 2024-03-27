@@ -21,13 +21,13 @@ def md_tree(doc_tree: dict):
 				if len(doc_tree[element]) == 0:
 					continue
 				
-				prepare(text, "consts", "\n## Consts")
+				prepare(text, "consts", "\n## Consts\n")
 				consts = doc_tree[element]
 
 				for con in consts:
 					v = consts[con]["value"]
 					text["toc"].append(" - [**%s**](#%s) -> %s" % (con, con, v))
-					text["consts"].append("### const %s" % con)
+					text["consts"].append("\n### const %s" % con)
 					text["consts"].append("*value* : `%s`" % v)
 					add_comments_to_text(consts[con], text["consts"])
 
@@ -35,12 +35,12 @@ def md_tree(doc_tree: dict):
 				if len(doc_tree[element]) == 0:
 					continue
 				
-				prepare(text, "vars", "\n## Vars")
+				prepare(text, "vars", "\n## Vars\n")
 				vars = doc_tree[element]
 
 				for v in vars:
 					text["toc"].append(" - [**%s**](#%s)" % (v, v))
-					text["vars"].append("### %s" % v)
+					text["vars"].append("\n### %s\n" % v)
 					if "default value" in vars[v]:
 						dv = vars[v]["default value"]
 						text["vars"].append("*default value* : `%s`" % dv)
@@ -60,7 +60,7 @@ def md_tree(doc_tree: dict):
 						args = signals[s]["args"]
 					
 					text["toc"].append(" - [**%s**](#%s)" % (s,s))
-					text["signals"].append("### %s" % s)
+					text["signals"].append("\n### %s" % s)
 					add_comments_to_text(signals[s], text["signals"], args)
 			
 			case "funcs":
@@ -76,7 +76,7 @@ def md_tree(doc_tree: dict):
 						args = funcs[f]["args"]
 					
 					text["toc"].append(" - [**%s**](#%s)" % (f, f))
-					text["funcs"].append("### %s%s" % (f, args))
+					text["funcs"].append("\n### %s" % f)
 					add_comments_to_text(funcs[f], text["funcs"], args)
 	
 	# print_text_tree(text)

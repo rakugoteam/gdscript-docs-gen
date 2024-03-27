@@ -15,7 +15,6 @@ def gen_doc_for(line : str, type : str, doc_tree : dict, comments : list):
 			comments.clear()
 			comments_message("main_def", doc_tree["class_name"], c)
 
-
 		case "var":
 			gen_doc_for_var(found, doc_tree, comments)
 		

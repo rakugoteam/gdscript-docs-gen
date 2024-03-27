@@ -11,6 +11,8 @@ def add_comments_to_text(part:dict, text_part:dict, args:dict = {}):
 		for a in args:
 			# we make a md points list
 			text_part.append(" - %s" % a)
+		
+		text_part.append("")
 
 	for c in part["comments"]:
 		md = bbcode_to_markdown(c)
